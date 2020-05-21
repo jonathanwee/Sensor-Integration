@@ -4,6 +4,7 @@ from openni import openni2
 import platform
 import numpy as np
 import cv2
+import time
 
 
 # Initialize OpenNI
@@ -48,6 +49,7 @@ while cv2.waitKey(1) == -1 and cv2.getWindowProperty("Depth View", cv2.WND_PROP_
     rgb_frame = cv2.resize(rgb_frame, (800, 600), interpolation=cv2.INTER_AREA)
     cv2.imshow("Depth View", rgb_frame)
     cv2.imwrite('Savedimg.jpg', rgb_frame)
+    time.sleep(3)
 
     #image save
 #    vidcap = cv2.VideoCapture(rgb_frame)  
