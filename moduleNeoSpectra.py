@@ -12,6 +12,9 @@ if os.environ.get('DISPLAY','') == '':
 import matplotlib.pyplot as plt
 
         # Open a socket sk (to send) and sk2 (to receive)
+sk= None
+sk2 = None
+
 def connect():
     host = "192.168.137.2"
     write_port = 5000
