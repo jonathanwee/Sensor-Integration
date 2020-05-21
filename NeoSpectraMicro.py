@@ -4,7 +4,6 @@ import csv
 import socket
 import sys
 import os
-import time
 import matplotlib as mpl
     # Use the OS display for the spectrum plot
 if os.environ.get('DISPLAY','') == '':
@@ -69,7 +68,7 @@ def readModuleID():
     print(" \n")
     # Closing the reception socket
     sk2.close()
-
+    print('test')
     return blt
 
 
@@ -121,7 +120,7 @@ def runPSD():
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00])
     pr = Operation +resolution + Mode + zeroPadding + scanTime + commonWavNum + opticalGain + apodizationSel + GeneralData
     sk.send(pr)
-    print("Bytes Sent : {}".format(sk.send(pr)))
+    print("Octets envoyes : {}".format(sk.send(pr)))
     sk.close()
 
         # Several recv () to receive the entire data, i.e. 65548 bytes
@@ -156,14 +155,14 @@ def runPSD():
 
         # Recovery of the waveNumber values, each one is coded on 8 bytes
         # Conversion of each 8 bytes => one value
-        # Returned values ​​are quantized. It should be divided by 2power (33) to de-quantize them.
+        # Returned values ​​are quantized. It should be divided by 2power (30) to de-quantize them.
     k = 4096*8
     wavNum = []
     for i in range(4096):
         val_2 = dataBytes[k:(k+8)]
         k+=8
         val_2 = int.from_bytes(val_2, "little")
-        val_2/=(2**33)
+        val_2/=(2**30)
             # Conversion of wavenumber from (cm-1) to wavelength (nm)
         val_2 = (10000000/val_2)
         wavNum.append(float("%.3f"%val_2))
@@ -174,6 +173,8 @@ def runPSD():
         myFile = csv.writer(myFile)
         myFile.writerow(wavNum)
         myFile.writerow(psd)
+
+
         ## displayed on the graph
     plt.title("Spectre")
     plt.plot(wavNum, psd)
@@ -181,11 +182,11 @@ def runPSD():
 #    plt.ylabel('PSD')
 #    plt.grid(True)
 #    plt.show()
+
     sk2.close()
 
         # Operation number 4
 def runBackground():
-    time.sleep(3)
     connect()
     print("**** runBackground ****\n")
     Operation = bytearray([0x04,0x00,0x00,0x00])
@@ -204,7 +205,7 @@ def runBackground():
 
     pr = Operation + resolution + Mode + zeroPadding + scanTime + commonWavNum + opticalGain + apodizationSel + GeneralData
     sk.send(pr)
-    print("Bytes Sent : {}".format(sk.send(pr)))
+    print("Octets envoyes : {}".format(sk.send(pr)))
     sk.close()
     back = sk2.recv(1024)
     back = list(back)
@@ -216,24 +217,22 @@ def runBackground():
 def runAbsorbance():
     connect()
     print("**** runAbsorbance ****\n")
-    #ref page 23 of SDK guide
-    Operation = bytearray([0x05,0x00,0x00,0x00]) # 5 = absorbance operation
-    resolution = bytearray([0x00,0x00,0x00,0x00]) #16nm resolution
-    Mode = bytearray([0x00,0x00,0x00,0x00])     #Using single run mode
-    zeroPadding = bytearray([0x03,0x00,0x00,0x00]) #32k points used in the FFT
+    Operation = bytearray([0x05,0x00,0x00,0x00])
+    resolution = bytearray([0x00,0x00,0x00,0x00])
+    Mode = bytearray([0x00,0x00,0x00,0x00])
+    zeroPadding = bytearray([0x03,0x00,0x00,0x00])
     scanTime = bytearray([0xD0,0x07,0x00,0x00])
-    commonWavNum = bytearray([0x07,0x00,0x00,0x00]) #4096 points used for the wave number
-    opticalGain = bytearray([0x00,0x00,0x00,0x00]) #using optical gain settings saved on the DVK
-    apodizationSel = bytearray([0x00,0x00,0x00,0x00]) #Boxcar Apodization window
+    commonWavNum = bytearray([0x07,0x00,0x00,0x00])
+    opticalGain = bytearray([0x00,0x00,0x00,0x00])
+    apodizationSel = bytearray([0x00,0x00,0x00,0x00])
     GeneralData = bytearray([0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00])
-                            #not required for absorbance
     pr = Operation +resolution + Mode + zeroPadding + scanTime + commonWavNum + opticalGain + apodizationSel + GeneralData
     sk.send(pr)
-    print("Bytes Sent : {}".format(len(pr)))
+    print("Octets envoyes : {}".format(len(pr)))
     sk.close()
     dataAll1 = sk2.recv(20480)
     dataAll2 = sk2.recv(20480)
@@ -267,7 +266,7 @@ def runAbsorbance():
         # Recovery of the waveNumber values, each one is coded on 8 bytes
         # Conversion of each 8 bytes => one value
         # Returned values ​​are quantized. It should be divided by 2 power (30) to de-quantize them.
-    k = 8*4096
+    k = 4096*8
     wavNum = []
     for i in range(4096):
         val_2 = dataBytes[k:(k+8)]
