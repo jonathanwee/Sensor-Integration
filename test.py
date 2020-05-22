@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from moduleNeoSpectra import runAbsorbance, runBackground, runPSD
+from moduleNeoSpectra import runAbsorbance, runBackground, runPSD, connect
 
 
 #readSoftwareVersion()
