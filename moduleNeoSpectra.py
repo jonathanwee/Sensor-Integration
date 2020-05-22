@@ -7,9 +7,9 @@ import os
 import time
 import matplotlib as mpl
     # Use the OS display for the spectrum plot
-if os.environ.get('DISPLAY','') == '':
+#if os.environ.get('DISPLAY','') == '':
     #print('no display found. Using non-interactive Agg backend')
-    mpl.use('Agg')
+    #mpl.use('Agg')
 import matplotlib.pyplot as plt
 
         # Open a socket sk (to send) and sk2 (to receive)
@@ -221,7 +221,9 @@ def runAbsorbance():
     resolution = bytearray([0x00,0x00,0x00,0x00])   #16nm resolution
     Mode = bytearray([0x00,0x00,0x00,0x00])         #Using single run mode
     zeroPadding = bytearray([0x03,0x00,0x00,0x00])  #32k points used in the FFT
-    scanTime = bytearray([0xD0,0x07,0x00,0x00])     # 215 ms ( Decimal to Hex to little endian)
+    scanTime = bytearray([0xD0,0x07,0x00,0x00])     #  ms ( Decimal to Hex to little endian) 
+    #https://www.rapidtables.com/convert/number/decimal-to-hex.html 
+    #https://www.scadacore.com/tools/programming-calculators/online-hex-converter/
     commonWavNum = bytearray([0x07,0x00,0x00,0x00]) #4096 points used for the wave number
     opticalGain = bytearray([0x00,0x00,0x00,0x00])  #using optical gain settings saved on the DVK
     apodizationSel = bytearray([0x00,0x00,0x00,0x00])   #Boxcar Apodization window
@@ -234,11 +236,11 @@ def runAbsorbance():
     pr = Operation +resolution + Mode + zeroPadding + scanTime + commonWavNum + opticalGain + apodizationSel + GeneralData
     sk.send(pr)
     print("Bytes Sent : {}".format(len(pr)))
-    time.sleep(5)
+    #time.sleep(5)
     sk.close()
-    time.sleep(2)
-    sk.close()
-    time.sleep(5)
+    #time.sleep(2)
+    #sk.close()
+    #time.sleep(5)
     dataAll1 = sk2.recv(20480)
     dataAll2 = sk2.recv(20480)
     dataAll3 = sk2.recv(20480)
@@ -290,12 +292,13 @@ def runAbsorbance():
         myFile.writerow(absorbance)
 
     # Display on the graph
-#    plt.title("Spectre")
-#    plt.plot(wavNum, absorbance)
-#    plt.xlabel('Wave length')
-#    plt.ylabel('Absorbance')
-#    plt.grid(True)
-#    plt.show()
+    plt.title("Spectre")
+    plt.plot(wavNum, absorbance)
+    plt.xlabel('Wave length')
+    plt.ylabel('Absorbance')
+    plt.grid(True)
+    plt.show()
+    plt.savefig('absorbance.png')
 
     sk2.close()
         # Return function for send by Bluetooth
@@ -393,10 +396,10 @@ def runSelfCorr():
 def runWavelengthCorrBG():
     connect()
     print("**** runWavelengthCorrBG ****\n")
-    Operation = bytearray([0x0B,0x00,0x00,0x00])
-    resolution = bytearray([0x00,0x00,0x00,0x00])
-    Mode = bytearray([0x00,0x00,0x00,0x00])
-    zeroPadding = bytearray([0x03,0x00,0x00,0x00])
+    Operation = bytearray([0x0B,0x00,0x00,0x00])    #Operation 11
+    resolution = bytearray([0x00,0x00,0x00,0x00])   #Resolution 0
+    Mode = bytearray([0x00,0x00,0x00,0x00])         #Not Req
+    zeroPadding = bytearray([0x03,0x00,0x00,0x00])  #32k points
     scanTime = bytearray([0xD0,0x07,0x00,0x00])
     commonWavNum = bytearray([0x07,0x00,0x00,0x00])
     opticalGain = bytearray([0x00,0x00,0x00,0x00])

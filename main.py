@@ -12,6 +12,7 @@ def index():
 
 def gen():
     filename = r'C:\Users\User\Desktop\New folder\Savedimg.jpg'
+    spectra = r'C:\Users\User\Desktop\New folder\absorbance.png'
     image = cv2.VideoCapture(filename)
 
     while(image.isOpened()):
@@ -20,6 +21,7 @@ def gen():
         #    img = cv2.resize(img, (0,0), fx=0.5, fy=0.5)
         #filename = r'C:\Users\User\Desktop\New folder\Savedimg.jpg'
             img = cv2.imread("Savedimg.jpg")
+            img2 = cv2.i
             img = cv2.resize(img, (0,0), fx=0.5, fy=0.5) 
             frame = cv2.imencode('.jpg', img)[1].tobytes()
             yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from moduleNeoSpectra import runAbsorbance, runBackground, runPSD, connect
+from moduleNeoSpectra import runAbsorbance, runBackground, runPSD, connect, runSelfCorr, runWavelengthCorrBG
 
 
 #readSoftwareVersion()
@@ -7,14 +7,14 @@ from moduleNeoSpectra import runAbsorbance, runBackground, runPSD, connect
 #runBackground()
 #runPSD()
 #runBackground()
-runAbsorbance()
+#runAbsorbance()
 #runGainAdj()
 
 #BurnGain()
 #BurnSelf()
 #runWLN()
-#runSelfCorr()
-#runWavelengthCorrBG()
+runSelfCorr()
+runWavelengthCorrBG()
 #restoreDefault()
 #readSoftwareVersion()
 
