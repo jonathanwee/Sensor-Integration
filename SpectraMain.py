@@ -1,20 +1,27 @@
-import matplotlib.pyplot as plt
-from moduleNeoSpectra import runAbsorbance, runBackground, runPSD, connect, runSelfCorr, runWavelengthCorrBG, runWarmup, runKeepwarm
+from moduleNeoSpectra import *
 
 
-#readSoftwareVersion()
+#readModuleID()
 #checkBoard()
-#runBackground()
+restoreDefault()
 #runPSD()
-runWarmup()
+#runWarmup()
 #runKeepwarm()
 #runBackground()
 #runAbsorbance()
+#checkBoard()
+
 #runGainAdj()
 #BurnGain()
-#BurnSelf()
-#runWLN()
+
+#runSelfCorr()
+#BurnSelf() #Prerequisite Operation: runSelfCorr
+
+#runWLN() #burnWLN Do not run. runWavelengthCorr not developed. Requires reference material
 #runSelfCorr()
 #runWavelengthCorrBG()
-#restoreDefault()
+
 #readSoftwareVersion()
+#SourceSettings()
+#runBackground()
+#setOpticalSettings()
