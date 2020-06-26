@@ -4,7 +4,7 @@ Combination of Terabee ToF and NeoSpectra Spectrography.
 
 Terabee Tof:
 -SpectraMain      : To call all packets
--moduleNeoSpectra : Packets. Refer to SDK page 23
+-moduleNeoSpectra : Packet information. Refer to SDK page 23
 -serverBluetooth  : Not in use
 
 Spectrography:
