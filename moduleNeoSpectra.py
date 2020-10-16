@@ -214,9 +214,9 @@ def runWarmup():
         sk.close()
         current_time = time.time()
         elapsed_time = current_time-timer
-        print('Elapsed time out of 600 seconds: '"%.2f" % elapsed_time)
-        print('Enter Ctrl-C to escape')
-        time.sleep(15)
+        print('\rElapsed time out of 600 seconds: '"%.2f" % elapsed_time)
+        print('\rEnter Ctrl-C to escape')
+        time.sleep(5)
 
         if elapsed_time > warmtime:
             print('warmup completed')
@@ -232,7 +232,7 @@ def runKeepwarm():
     
     print("**** runKeepwarm ****\n")
     timer = time.time()
-    #warmtime = 600
+    warmtime = 600
     status = ''
     while status != 's':
         connect()
@@ -275,7 +275,9 @@ def runKeepwarm():
                     elif ord(byte_arr) >= 32: #space_char
                         input += "".join(map(chr,byte_arr))
                 if len(input) == 0 and (time.time() - start_time) > timeout:
+                    
                     print("Timed Out. Continuing Keepwarm")
+                    print("initialisation is completed.")
                     break
 
             print('')  # needed to move to next line
@@ -336,7 +338,7 @@ def runAbsorbance():
     scanTime = bytearray([0xD0,0x07,0x00,0x00])     #  ms ( Decimal to Hex to little endian) 
     #https://www.rapidtables.com/convert/number/decimal-to-hex.html 
     #https://www.scadacore.com/tools/programming-calculators/online-hex-converter/
-    commonWavNum = bytearray([0x00,0x00,0x00,0x00]) #4096 points used for the wave number
+    commonWavNum = bytearray([0x07,0x00,0x00,0x00]) #4096 points used for the wave number
     opticalGain = bytearray([0x00,0x00,0x00,0x00])  #using optical gain settings saved on the DVK
     apodizationSel = bytearray([0x00,0x00,0x00,0x00])   #Boxcar Apodization window
     GeneralData = bytearray([0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
@@ -350,14 +352,41 @@ def runAbsorbance():
     print("Bytes Sent : {}".format(len(pr)))
     sk.close()
 
-    dataAll1 = sk2.recv(20480)
-    dataAll2 = sk2.recv(20480)
-    dataAll3 = sk2.recv(20480)
-    dataAll4 = sk2.recv(20480)
-    dataAll5 = sk2.recv(20480)
-    dataAll6 = sk2.recv(20480)
+    dataAll1 = sk2.recv(4096)
+    dataAll2 = sk2.recv(4096)
+    dataAll3 = sk2.recv(4096)
+    dataAll4 = sk2.recv(4096)
+    dataAll5 = sk2.recv(4096)
+    dataAll6 = sk2.recv(4096)
+    dataAll7 = sk2.recv(4096)
+    dataAll8 = sk2.recv(4096)
+    dataAll9 = sk2.recv(4096)
+    dataAll10 = sk2.recv(4096)
+    dataAll11 = sk2.recv(4096)
+    dataAll12 = sk2.recv(4096)
+    dataAll13 = sk2.recv(4096)
+    dataAll14 = sk2.recv(4096)
+    dataAll15 = sk2.recv(4096)
+    dataAll16 = sk2.recv(4096)
+    dataAll17 = sk2.recv(4096)
+    dataAll18 = sk2.recv(4096)
+    dataAll19 = sk2.recv(4096)
+    dataAll20 = sk2.recv(4096)
+    dataAll21 = sk2.recv(4096)
+    dataAll22 = sk2.recv(4096)
+    dataAll23 = sk2.recv(4096)
+    dataAll24 = sk2.recv(4096)
+    dataAll25 = sk2.recv(4096)
+    dataAll26 = sk2.recv(4096)
+    dataAll27 = sk2.recv(4096)
+    dataAll28 = sk2.recv(4096)
+    dataAll29 = sk2.recv(4096)
+    dataAll30 = sk2.recv(4096)
 
-    dataAll = dataAll1 + dataAll2 + dataAll3 + dataAll4 + dataAll5 + dataAll6
+
+    dataAll = dataAll1 + dataAll2 + dataAll3 + dataAll4 + dataAll5 + dataAll6 + dataAll7 + dataAll8 + dataAll9 + dataAll10\
+                + dataAll11 + dataAll12 + dataAll13 + dataAll14 + dataAll15 + dataAll16 + dataAll17 + dataAll18 + dataAll19 + dataAll20\
+                + dataAll21 + dataAll22 + dataAll23 + dataAll24 + dataAll25 + dataAll26 + dataAll27 + dataAll28 + dataAll29 + dataAll30\
 
     dataBytes = dataAll[12:]
     dataList = list(dataAll)
@@ -371,9 +400,7 @@ def runAbsorbance():
     j= 0
     absorbance = []
     for i in range(4096):
-        #print(dataBytes[j:(j+8)])
         val_1 = dataBytes[j:(j+8)]
-        #print(val_1)
         j+=8
         val_1 = int.from_bytes(val_1, "little")
         val_1 /= (2**33)
@@ -388,12 +415,8 @@ def runAbsorbance():
     k = 4096*8
     wavNum = []
     for i in range(4096):
-        #val_2 = dataBytes[k:(k+8)]
         val_2 = int.from_bytes(dataBytes[k:(k+8)], byteorder='little')
-        print(dataBytes[k:(k+8)])
-        print(val_2)
         k+=8
-        #val_2 = int.from_bytes(val_2, "little")
         val_2/=(2**30)
         ## Conversion from wavenumber (cm-1) to wavelength (nm)
         val_2 = (10000000/val_2)
@@ -401,19 +424,23 @@ def runAbsorbance():
     wavNum.reverse()
 
     # Writing .csv file
-    with open("dataRunAbsorbance.csv", "w") as myFile:
-        myFile = csv.writer(myFile)
+    name=input("File name:")
+    directory=(r'C:\\Users\\siewty\\Desktop\\Current_Projects\\FMCG\\Sensor-Integration-master\\Actimax Char\\')
+    with open(directory , name+"_dataRunAbsorbance.csv", "w", newline="") as myFile:
+        myFile = csv.writer(dt, myFile)
         myFile.writerow(wavNum)
         myFile.writerow(absorbance)
-
+        
     # Display on the graph
-    plt.title("Spectre")
+    plt.title(name+"Spectre")
     plt.plot(wavNum, absorbance)
-    plt.xlabel('Wave length')
+    plt.xlabel('Wavelength (nm)')
     plt.ylabel('Absorbance')
     plt.grid(True)
+    fig1 = plt.gcf()
     plt.show()
-    plt.savefig('absorbance.png')
+    plt.draw()
+    fig1.savefig(name+'_absorbance.png')
 
     sk2.close()
         # Return function for send by Bluetooth
@@ -587,7 +614,7 @@ def SourceSettings():
     commonWavNum = bytearray([0x00,0x00,0x00,0x00]) #4096 points used for the wave number
     opticalGain = bytearray([0x00,0x00,0x00,0x00])  #using optical gain settings saved on the DVK
     apodizationSel = bytearray([0x00,0x00,0x00,0x00])   #Boxcar Apodization window
-    GeneralData = bytearray([0x02,0x00,0x00,0x00, 0x01,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
+    GeneralData = bytearray([0x02,0x00,0x00,0x00, 0x0E,0x0A,0x02,0x01, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
                             0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00,\
